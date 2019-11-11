@@ -35,11 +35,17 @@
         return;
       }
       var links = [];
-      var attachments = data.status === "passed" ? 
-        data.testStage.attachments : 
-        data.testStage.steps.find(function (e) { 
-          return e.name === "Collect debug information on failure" 
-        }).attachments;
+      var attachments = [];
+      if (data.status === "passed") {
+        attachments = data.testStage.attachments;
+      } else {
+        var debug = data.testStage.steps.find(function (e) { 
+          return e.name === "Collect debug information on failure" 
+        });
+        if (!!debug) {
+          attachments = debug.attachments;
+        }
+      }
       for (var i in attachments) {
         var attach = attachments[i];
         if (attach.name.match(/\.har$/)) {
